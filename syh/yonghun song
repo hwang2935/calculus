@@ -1,0 +1,112 @@
+---
+marp : true
+---
+
+# **Go언어를 이용한 미분기하학 개념의 구조적 접근**
+
+---
+
+### 목차
+1. 연구의 목적
+2. 미분기하학  
+3. go언어
+4. 개인 코드 설명
+
+---
+
+### 1. 연구의 목적
+
+"현재의 수학 교육은 문제를 푸는 데 너무 집중되어 있다." 
+-Prof. kang, hyosang-
+
+"수학비전공자들이 미분기하학의 이해를 위한 프로그램이 필요하다"
+-Prof. kang, hyosang-
+
+"파이썬 같은 애들은 강타입이 아니라서 애매모호하다"
+-Prof. kang, hyosang-
+
+-> **강타입 Go언어를 이용해서 미분기하학 개념의 추상화**
+
+---
+### 2-1. 미분기하학-미분, 적분
+
+**-Wedge Product(쐐기곱):** 두 벡터나 형식을 결합해 더 높은 차원의 대상(면적, 부피 등)을 만드는 연산
+
+*성질1: 반대칭성-두 벡터를 교환하면 부호가 반대로 바뀐다.
+$$
+\alpha \wedge \beta = -\beta \wedge \alpha
+$$
+*성질2: 선형성-벡터에 대해 선형이다.
+$$
+(\alpha + \beta) \wedge \gamma = \alpha \wedge \gamma + \beta \wedge \gamma
+$$
+*성질3: 결합성-여러 벡터에 대해 결합법칙이 성립한다.
+$$
+\alpha \wedge (\beta \wedge \gamma) = (\alpha \wedge \beta) \wedge \gamma
+$$
+
+**-Divergence Theorm(발산정리):**   
+
+
+**- Jacobian Matrix(자코비안 행렬):** 다변수 함수의 미분계수를 구하기 위한 행렬 연산. 함수 벡터 \( \mathbf{f} = (f_1, f_2, \ldots, f_m) \)가 벡터 \( \mathbf{x} = (x_1, x_2, \ldots, x_n) \)에 대해 정의된다.
+$$
+J(\mathbf{f}) = \begin{bmatrix}
+\frac{\partial f_1}{\partial x_1} & \frac{\partial f_1}{\partial x_2} & \cdots & \frac{\partial f_1}{\partial x_n} \\
+\frac{\partial f_2}{\partial x_1} & \frac{\partial f_2}{\partial x_2} & \cdots & \frac{\partial f_2}{\partial x_n} \\
+\vdots & \vdots & \ddots & \vdots \\
+\frac{\partial f_m}{\partial x_1} & \frac{\partial f_m}{\partial x_2} & \cdots & \frac{\partial f_m}{\partial x_n}
+\end{bmatrix}
+$$
+---
+### 2-2. 미분기하학-다양체
+-정의: 국소적으로 유클리드 공간을 닮은 공간
+
+---
+
+### 2-2. 미분기하학-스토크스 정리
+-내용: 방향성 있는 경계가 있는 n차원 미분다양체 M위의 (n-1)-형식 w에 대해 아래의 식이 성립한다.
+$$
+\int_{\partial M} \omega = \int_{M} d\omega
+$$
+-증명: 
+$$
+\begin{align*}
+w &= P \, dy \wedge dz + Q \, dz \wedge dx + R \, dx \wedge dy \\
+dw &= dP \wedge dy \wedge dz + \ldots = \left( P_x \, dx + P_y \, dy + P_z \, dz \right) \wedge dy \wedge dz + \ldots \\
+   &= P_x \, dx \wedge dy \wedge dz + Q_y \, dy \wedge dx \wedge dz + R_z \, dz \wedge dy \wedge dx \\
+   &= \left( P_x + Q_y + R_z \right) dx \wedge dy \wedge dz
+\end{align*}
+$$
+
+
+----
+### 3-1: go 언어-interface, struct
+-interface : 메서드들의 집합체이다. 이는 type이 가져야할 메서드 원형을 정의한다.
+
+-struct : 필드들의 집합체이다. 
+
+```go
+func Integral(f calculus.RealValued) float64{
+  var sum float64
+
+    if n <= 0 {
+        return 0, errors.New("the number of subdivisions must be greater than zero")
+    }
+
+    var sum float64
+    dx := (b - a) / float64(n)
+
+    for i := 0; i < n; i++ {
+        x := a + float64(i)*dx + dx/2
+        sum += f(x) * dx
+    }
+  
+  return sum
+}
+```
+이 코드는 수치 적분(Numerical Integration)을 수행하기 위해 작성되었습니다. 수치 적분은 해석적 접근으로 적분이 어려운 함수의 적분 값을 근사적으로 계산하는 방법입니다. 특히, 이 코드는 리만 합(Riemann Sum)을 이용하여 일변수 함수의 적분을 계산합니다.
+
+---
+
+
+
